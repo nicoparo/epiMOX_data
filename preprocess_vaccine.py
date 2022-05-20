@@ -60,19 +60,20 @@ data_Italia = data.groupby('data_somministrazione').sum()
 data_Italia['mono_dose'] = monodose['prima_dose']
 data_Italia.fillna(0,inplace=True)
 
+n_days_extrapolation = 400
 max_Italia_index = max(data_Italia.index)
-new_max = max_Italia_index + pd.Timedelta(100, 'days')
+new_max = max_Italia_index + pd.Timedelta(n_days_extrapolation, 'days')
 new_index = pd.date_range('2020-02-24', new_max)
 
 today = str(pd.Timestamp.today()+pd.Timedelta(2, 'day'))[:10]
 #today = '2021-03-26'
-print(today)
+#print(today)
 
 data_Italia['prima_dose'] = data_Italia.prima_dose-data_Italia.mono_dose
 data_Italia['seconda_dose'] = data_Italia.seconda_dose+data_Italia.mono_dose+data_Italia.pregressa_infezione
 data_Italia['terza_dose'] = data_Italia.dose_addizionale_booster
 
-print(data_Italia.terza_dose)
+#print(data_Italia.terza_dose)
 #data_Italia.loc[pd.to_datetime(today),['prima_dose','seconda_dose']] = 3e5
 #data_Italia.loc[pd.to_datetime(today),['terza_dose']] = 4e5
 data_Italia.loc[max_Italia_index + pd.Timedelta(1, 'day')] = data_Italia.iloc[-30:, :].mean().round()
